@@ -49,7 +49,7 @@
     <div class="sidebar">
         <h1>My Invoice App</h1>
         <button id="homeBtn" class="nav-button tertiary">🏠 Home</button>
-        <a href="index.html" class="nav-button">➕ Create New Invoice</a>
+        <a href="invoice.html" class="nav-button">➕ Create New Invoice</a>
         <button id="addClientBtn" class="nav-button secondary">👤 Manage Clients</button>
         <button id="monthlyReportBtn" class="nav-button tertiary">📅 Yearly/Monthly Report</button>
 
@@ -83,13 +83,13 @@
         <div id="addClientView" class="content-view">
             <h1>Manage Clients</h1>
             <div class="form-group"><label for="clientGst">GST Number</label><input type="text" id="clientGst"></div>
-            <div class="form-group"><label for="clientName">Client Name</label><input type="text" id="clientName"></div>
+            <div class="form-group"><label for="clientName">Company Name</label><input type="text" id="clientName"></div>
             <div class="form-group"><label for="clientAddress">Address</label><textarea id="clientAddress" rows="3"></textarea></div>
             <div class="form-group"><label for="clientState">State</label><input type="text" id="clientState"></div>
             <div class="form-group"><label for="clientCode">State Code</label><input type="text" id="clientCode"></div>
-            <button id="saveClientBtn" class="btn-save">Save Client</button>
+            <button id="saveClientBtn" class="btn-save">Save Company</button>
             <hr style="margin: 20px 0;">
-            <h2>Existing Clients</h2>
+            <h2>Existing Company</h2>
             <table id="clientListTable">
                 <thead><tr><th>GSTIN</th><th>Name</th><th>Actions</th></tr></thead>
                 <tbody id="clientListBody"></tbody>
@@ -352,4 +352,5 @@
         window.addEventListener('load', initializeDashboard);
     </script>
 </body>
+
 </html>
