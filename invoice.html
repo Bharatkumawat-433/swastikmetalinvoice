@@ -174,37 +174,33 @@
         <div class="main-header">
             <h2 id="i1">TAX INVOICE</h2>
         </div>
+        
         <table class="header-section">
             <tr>
-                <td rowspan="2" style="width: 50%; border-bottom: none; border-right: none;">
+                <td style="width: 50%;">
                     <div>
                         <span class="section-title">Swastik Metal </span><br>
-                        Shop NO. 01  Surat<br>
+                        Shop NO. 01 Surat<br>
                         GSTIN : 2400002KJDJSN55 <br>
-                        Address :  Gujarat <br>
+                        Address : Gujarat <br>
                         State : GUJARAT <br> Code: 24
                     </div>
                 </td>
-                <td style="border: none; padding: 0;">
-                    <table class="right-details">
+
+                <td style="padding: 0; vertical-align: top;">
+                    <table class="right-details" style="width: 100%;">
                         <tr>
-                            <td style="width: 50%;  border: none;">
-                                  <div>Invoice No.<br>
+                            <td style="width: 50%;">
+                                <div>Invoice No.<br>
                                     <span class="section-title">
                                         <input type="text" id="invoiceNumberInput" placeholder="Invoice No." style="width: 100%; text-align:center; font-weight: bold; font-size: 16px;">
                                     </span>
-                                  </div>
+                                </div>
                             </td>
-                            <td style="width: 50%; border-bottom: none;">
+                            <td style="width: 50%;">
                                 <div>Dated<br><input type="date" id="invoiceDate" style="text-align: center;"></div>
                             </td>
                         </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 0;">
-                    <table class="right-details">
                         <tr>
                             <td>
                                 <div>
@@ -229,7 +225,6 @@
                 </td>
             </tr>
         </table>
-    
         <table class="buyer-seller-section">
             <tr>
                 <td style="width: 50%; border-bottom: none;">
@@ -327,14 +322,14 @@
                          </table>
                     </td>
                 </tr>
-    
+        
                 <tr class="total-amount-row">
                     <td colspan="4" class="align-right">Total</td>
                     <td class="align-right" id="totalQuantity">0.00 KGS</td>
                     <td colspan="2"></td>
                     <td class="align-right" id="grandTotal">₹ 0.00</td>
                 </tr>
-    
+        
                 <tr>
                     <td colspan="8">
                         <div id="amountInWords">
@@ -343,7 +338,7 @@
                         </div>
                     </td>
                 </tr>
-    
+        
                 <tr class="items-table-header">
                     <th rowspan="2">HSN/SAC</th>
                     <th rowspan="2" colspan="2">Taxable Value</th>
@@ -387,15 +382,15 @@
                                 IFSC Code : <b>YOURCODE123</b>
                             </div>
                         
-    
+        
                         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
                             <div >
                             <b>Declaration</b><br>
                             <p>We declare that this invoice shows the actual price of the goods <br> described and that all particulars are true and correct.</p>
                         </div>
                             <div style="text-align: right; padding-bottom: 10px;">
-                                  <b>For Swastik Metal</b><br><br><br><br><br>
-                                  Authorised Signatory
+                                    <b>For Swastik Metal</b><br><br><br><br><br>
+                                    Authorised Signatory
                             </div>
                         </div>
                         </td>
@@ -409,7 +404,7 @@
         <button id="addClientBtn">Go To Dashboard</button>
         <button id="viewBtn">View Invoice</button>
         <button id="downloadBtn">Download PDF</button>
-      
+    
     </div>
 </div>
 
