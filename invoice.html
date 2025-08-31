@@ -186,7 +186,6 @@
                         State : GUJARAT <br> Code: 24
                     </div>
                 </td>
-
                 <td style="padding: 0; vertical-align: top;">
                     <table class="right-details" style="width: 100%;">
                         <tr>
@@ -225,6 +224,7 @@
                 </td>
             </tr>
         </table>
+
         <table class="buyer-seller-section">
             <tr>
                 <td style="width: 50%; border-bottom: none;">
@@ -288,8 +288,7 @@
                     <td class="align-right">
                         <input type="text" class="rate-input" value="">
                     </td>
-                    <td class="align-center"><input type="text" class="per-input"></td>
-                    <td class="align-right amount-cell">0.00</td>
+                    <td class="align-center"><input type="text" class="per-input" value="KGS"></td> <td class="align-right amount-cell">0.00</td>
                 </tr>
             </tbody>
             <tfoot id="invoiceTableFoot">
@@ -498,21 +497,13 @@
         }
     }
 
-    // --- All your original calculation and form logic below ---
-    
-    //
-    // --- START OF THE FIX ---
-    //
-    // This new function will fetch clients from Google Sheets and store them in the browser.
     async function fetchAndStoreClients() {
         console.log("Fetching latest client data...");
         try {
-            // We use the 'getClients' action from your Apps Script
             const response = await fetch(`${APPS_SCRIPT_URL}?action=getClients`);
             const result = await response.json();
 
             if (result.status === 'success') {
-                // Store the data in localStorage so the GST input can find it
                 localStorage.setItem('clientData', JSON.stringify(result.data));
                 console.log("Client data successfully fetched and stored in localStorage.");
             } else {
@@ -524,21 +515,16 @@
             alert("An error occurred while loading client data.");
         }
     }
-    //
-    // --- END OF THE FIX ---
-    //
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Run the new function to get the latest client list when the page loads
         fetchAndStoreClients();
 
         document.getElementById('addClientBtn').addEventListener('click', () => {
-            window.open('index.html', '_blank'); // Changed from manage-clients.html to open dashboard
+            window.open('index.html', '_blank');
         });
         document.getElementById('viewBtn').addEventListener('click', () => window.print());
-        // 'downloadBtn' click now calls the new 'saveAndDownloadPDF' function
         document.getElementById('downloadBtn').addEventListener('click', saveAndDownloadPDF);
-        document.getElementById('downloadBtn').innerText = 'Save & Download PDF'; // Update button text
+        document.getElementById('downloadBtn').innerText = 'Save & Download PDF';
         
         document.getElementById('addRowBtn').addEventListener('click', addRow);
         document.getElementById('removeRowBtn').addEventListener('click', removeRow);
@@ -547,7 +533,6 @@
         
         shipToGstInput.addEventListener('input', () => {
             const gstToFind = shipToGstInput.value.trim().toUpperCase();
-            // This line now correctly reads the data saved by fetchAndStoreClients()
             const allClients = JSON.parse(localStorage.getItem('clientData')) || {};
             const clientData = allClients[gstToFind];
             if (clientData) {
@@ -693,8 +678,7 @@
             <td class="align-center"><input type="text" class="hsn-input"></td>
             <td class="align-right"><input type="text" class="quantity-input" value=""></td>
             <td class="align-right"><input type="text" class="rate-input" value=""></td>
-            <td class="align-center"><input type="text" class="per-input"></td>
-            <td class="align-right amount-cell">0.00</td>
+            <td class="align-center"><input type="text" class="per-input" value="KGS"></td> <td class="align-right amount-cell">0.00</td>
         `;
         tableBody.appendChild(newRow);
         newRow.querySelectorAll('input').forEach(input => {
