@@ -1,358 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Dashboard</title>
-    <style>
-        :root { --primary-color: #007bff; --light-gray: #f0f2f5; --border-color: #dee2e6; --danger-color: #dc3545; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--light-gray); margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 300px; background: white; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        .sidebar h1 { font-size: 24px; color: var(--primary-color); margin: 0 0 10px 0; }
-        .sidebar .nav-button { display: block; width: 100%; background-color: var(--primary-color); color: white; border: none; padding: 15px; font-size: 16px; font-weight: 600; border-radius: 8px; text-align: center; text-decoration: none; cursor: pointer; margin: 5px 0; box-sizing: border-box; }
-        .sidebar .nav-button.secondary { background-color: #6c757d; }
-        .sidebar .nav-button.tertiary { background-color: #f8f9fa; color: #333; border: 1px solid var(--border-color); }
-        .sidebar .company-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0; }
-        .sidebar .company-header h2 { font-size: 18px; margin: 10px 0; }
-        .sidebar .company-header .arrow { transition: transform 0.2s; }
-        .sidebar .company-header .arrow.open { transform: rotate(90deg); }
-        .company-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; display: none; }
-        .company-list.open { display: block; }
-        .company-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s; font-weight: 500; }
-        .company-list li:hover, .company-list li.active { background-color: #e9f5ff; color: var(--primary-color); }
-        .delete-icon { color: var(--danger-color); font-size: 18px; visibility: hidden; opacity: 0; transition: opacity 0.2s; }
-        .company-list li:hover .delete-icon { visibility: visible; opacity: 0.7; }
-        .delete-icon:hover { opacity: 1; }
-        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
-        .content-view { display: none; }
-        .content-view.active { display: block; }
-        .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card h3 { margin: 0; color: #555; font-size: 16px; font-weight: 600; }
-        .card p { margin: 10px 0 0; color: var(--primary-color); font-size: 36px; font-weight: 700; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 15px; text-align: left; }
-        th { background-color: #f8f9fa; font-weight: 600; }
-        .action-buttons button { cursor: pointer; background: none; border: none; font-size: 14px; margin: 0 5px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; }
-        input:read-only { background-color: #e9ecef; }
-        .btn-save { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; }
-        .list-item { background-color: #fff; padding: 15px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; }
-        .list-item:hover { background-color: #e9f5ff; }
-        .btn-back { background-color: #6c757d; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 20px;}
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Invoice Dashboard</title>
+  <style>
+    :root { --primary-color: #007bff; --light-gray: #f0f2f5; --border-color: #dee2e6; --danger-color: #dc3545; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--light-gray); margin: 0; display: flex; height: 100vh; }
+    .sidebar { width: 300px; background: white; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+    .sidebar h1 { font-size: 24px; color: var(--primary-color); margin: 0 0 10px 0; }
+    .sidebar .nav-button { display: block; width: 100%; background-color: var(--primary-color); color: white; border: none; padding: 15px; font-size: 16px; font-weight: 600; border-radius: 8px; text-align: center; text-decoration: none; cursor: pointer; margin: 5px 0; box-sizing: border-box; }
+    .sidebar .nav-button.secondary { background-color: #6c757d; }
+    .sidebar .nav-button.tertiary { background-color: #f8f9fa; color: #333; border: 1px solid var(--border-color); }
+    .sidebar .company-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0; }
+    .sidebar .company-header h2 { font-size: 18px; margin: 10px 0; }
+    .sidebar .company-header .arrow { transition: transform 0.2s; }
+    .sidebar .company-header .arrow.open { transform: rotate(90deg); }
+    .company-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; display: none; }
+    .company-list.open { display: block; }
+    .company-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s; font-weight: 500; }
+    .company-list li:hover, .company-list li.active { background-color: #e9f5ff; color: var(--primary-color); }
+    .delete-icon { color: var(--danger-color); font-size: 18px; visibility: hidden; opacity: 0; transition: opacity 0.2s; }
+    .company-list li:hover .delete-icon { visibility: visible; opacity: 0.7; }
+    .delete-icon:hover { opacity: 1; }
+    .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
+    .content-view { display: none; }
+    .content-view.active { display: block; }
+    .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .card h3 { margin: 0; color: #555; font-size: 16px; font-weight: 600; }
+    .card p { margin: 10px 0 0; color: var(--primary-color); font-size: 36px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    th, td { border-bottom: 1px solid var(--border-color); padding: 15px; text-align: left; }
+    th { background-color: #f8f9fa; font-weight: 600; }
+    .action-buttons button { cursor: pointer; background: none; border: none; font-size: 14px; margin: 0 5px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; }
+    input:read-only { background-color: #e9ecef; }
+    .btn-save { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; }
+    .list-item { background-color: #fff; padding: 15px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; }
+    .list-item:hover { background-color: #e9f5ff; }
+    .btn-back { background-color: #6c757d; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 20px;}
+  </style>
 </head>
 <body>
+  <div class="sidebar">
+    <h1>My Invoice App</h1>
+    <button id="homeBtn" class="nav-button tertiary">🏠 Home</button>
+    <a href="invoice.html" class="nav-button">➕ Create New Invoice</a>
+    <button id="addClientBtn" class="nav-button secondary">👤 Manage Clients</button>
+    <button id="monthlyReportBtn" class="nav-button tertiary">📅 Yearly/Monthly Report</button>
 
-    <div class="sidebar">
-        <h1>My Invoice App</h1>
-        <button id="homeBtn" class="nav-button tertiary">🏠 Home</button>
-        <a href="invoice.html" class="nav-button">➕ Create New Invoice</a>
-        <button id="addClientBtn" class="nav-button secondary">👤 Manage Clients</button>
-        <button id="monthlyReportBtn" class="nav-button tertiary">📅 Yearly/Monthly Report</button>
+    <div id="companyToggle" class="company-header">
+      <h2>Companies</h2>
+      <span class="arrow">▶</span>
+    </div>
+    <ul id="companyList" class="company-list">
+      <li id="loader">Loading...</li>
+    </ul>
+  </div>
 
-        <div id="companyToggle" class="company-header">
-            <h2>Companies</h2>
-            <span class="arrow">▶</span>
-        </div>
-        <ul id="companyList" class="company-list">
-            <li id="loader">Loading...</li>
-        </ul>
+  <div class="main-content">
+    <div id="statsView" class="content-view active">
+      <h1>Dashboard</h1>
+      <div class="stats-cards">
+        <div class="card"><h3>All-Time Invoices</h3><p id="totalInvoices">0</p></div>
+        <div class="card"><h3>This Month's Invoices</h3><p id="currentMonthInvoices">0</p></div>
+        <div class="card"><h3>Total Companies</h3><p id="totalCompanies">0</p></div>
+      </div>
     </div>
 
-    <div class="main-content">
-        <div id="statsView" class="content-view active">
-            <h1>Dashboard</h1>
-            <div class="stats-cards">
-                <div class="card"><h3>All-Time Invoices</h3><p id="totalInvoices">0</p></div>
-                <div class="card"><h3>This Month's Invoices</h3><p id="currentMonthInvoices">0</p></div>
-                <div class="card"><h3>Total Companies</h3><p id="totalCompanies">0</p></div>
-            </div>
-        </div>
-        <div id="companyDetailsView" class="content-view">
-            <h2 id="companyNameHeader"></h2>
-            <p><strong id="companyGstinHeader"></strong></p>
-            <p><strong>Total Invoices:</strong> <span id="companyInvoiceCount"></span></p>
-            <table id="invoiceTable">
-                <thead><tr><th>Date</th><th>Invoice No</th><th>Link</th></tr></thead>
-                <tbody id="invoiceTableBody"></tbody>
-            </table>
-        </div>
-        <div id="addClientView" class="content-view">
-            <h1>Manage Clients</h1>
-            <div class="form-group"><label for="clientGst">GST Number</label><input type="text" id="clientGst"></div>
-            <div class="form-group"><label for="clientName">Company Name</label><input type="text" id="clientName"></div>
-            <div class="form-group"><label for="clientAddress">Address</label><textarea id="clientAddress" rows="3"></textarea></div>
-            <div class="form-group"><label for="clientState">State</label><input type="text" id="clientState"></div>
-            <div class="form-group"><label for="clientCode">State Code</label><input type="text" id="clientCode"></div>
-            <button id="saveClientBtn" class="btn-save">Save Company</button>
-            <hr style="margin: 20px 0;">
-            <h2>Existing Company</h2>
-            <table id="clientListTable">
-                <thead><tr><th>GSTIN</th><th>Name</th><th>Actions</th></tr></thead>
-                <tbody id="clientListBody"></tbody>
-            </table>
-        </div>
-        
-        <div id="monthlyReportView" class="content-view">
-            <h1 id="reportTitle">Yearly Report</h1>
-            <div id="reportContainer">
-                </div>
-        </div>
+    <div id="companyDetailsView" class="content-view">
+      <h2 id="companyNameHeader"></h2>
+      <p><strong id="companyGstinHeader"></strong></p>
+      <p><strong>Total Invoices:</strong> <span id="companyInvoiceCount"></span></p>
+      <table id="invoiceTable">
+        <thead><tr><th>Date</th><th>Invoice No</th><th>Link</th></tr></thead>
+        <tbody id="invoiceTableBody"></tbody>
+      </table>
     </div>
 
-    <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1enjzSw3ENfyjs2UMseA_9JfJTxU4RELNt4d9DYhqqVlqlCuYxylDHpiWzBjh2c9m/exec";
-        
-        let invoiceData = {};
-        let clientData = {};
-        let monthlyReportData = {};
+    <div id="addClientView" class="content-view">
+      <h1>Manage Clients</h1>
+      <div class="form-group"><label for="clientGst">GST Number</label><input type="text" id="clientGst"></div>
+      <div class="form-group"><label for="clientName">Company Name</label><input type="text" id="clientName"></div>
+      <div class="form-group"><label for="clientAddress">Address</label><textarea id="clientAddress" rows="3"></textarea></div>
+      <div class="form-group"><label for="clientState">State</label><input type="text" id="clientState"></div>
+      <div class="form-group"><label for="clientCode">State Code</label><input type="text" id="clientCode"></div>
+      <button id="saveClientBtn" class="btn-save">Save Company</button>
+      <hr style="margin: 20px 0;">
+      <h2>Existing Company</h2>
+      <table id="clientListTable">
+        <thead><tr><th>GSTIN</th><th>Name</th><th>Actions</th></tr></thead>
+        <tbody id="clientListBody"></tbody>
+      </table>
+    </div>
 
-        // --- View Management ---
-        const contentViews = document.querySelectorAll('.content-view');
-        function switchView(viewId) {
-            contentViews.forEach(view => view.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+    <div id="monthlyReportView" class="content-view">
+      <h1 id="reportTitle">Yearly Report</h1>
+      <div id="reportContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhZcDN6G9j979fKrAd1N6QeCKoR3eYuNe1YBq8uxdjGhj--jnKZMYvlyA6m-NYmMPo/exec"; // <-- Replace with deployed Web App URL
+
+    let invoiceData = {};
+    let clientData = {};
+    let monthlyReportData = {};
+
+    // --- View Management ---
+    const contentViews = document.querySelectorAll('.content-view');
+    function switchView(viewId) {
+      contentViews.forEach(view => view.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    // --- Main Data Fetching ---
+    async function initializeDashboard() {
+      try {
+        document.getElementById('loader').innerText = 'Loading...';
+        const [invoiceResponse, clientResponse] = await Promise.all([
+          fetch(`${APPS_SCRIPT_URL}`),
+          fetch(`${APPS_SCRIPT_URL}?action=getClients`)
+        ]);
+
+        if (!invoiceResponse.ok) throw new Error(`Invoice endpoint returned ${invoiceResponse.status}`);
+        if (!clientResponse.ok) throw new Error(`Clients endpoint returned ${clientResponse.status}`);
+
+        const invoiceResult = await invoiceResponse.json();
+        if (invoiceResult.status !== 'success') throw new Error(invoiceResult.message || 'Failed to load invoice data');
+        invoiceData = invoiceResult.data || {};
+        monthlyReportData = invoiceData.monthlyData || {};
+
+        const clientResult = await clientResponse.json();
+        if (clientResult.status !== 'success') throw new Error(clientResult.message || 'Failed to load client data');
+        clientData = clientResult.data || {};
+
+        document.getElementById('totalInvoices').innerText = invoiceData.stats ? invoiceData.stats.totalInvoices : 0;
+        document.getElementById('currentMonthInvoices').innerText = invoiceData.stats ? invoiceData.stats.currentMonthInvoices : 0;
+        renderUnifiedCompanyData();
+      } catch (error) {
+        console.error("Failed to initialize dashboard:", error);
+        document.getElementById('loader').innerText = "Failed to load data.";
+      }
+    }
+
+    // --- Company List UI Rendering ---
+    function renderUnifiedCompanyData() {
+      document.getElementById('loader').style.display = 'none';
+      const companiesFromInvoices = invoiceData.companies || {};
+      const unifiedCompanies = {};
+      // Add clients first (keyed by company name -> gst)
+      for (const gst in clientData) {
+        const name = clientData[gst].name || gst;
+        unifiedCompanies[name] = gst;
+      }
+      // Add invoice-only companies
+      for (const name in companiesFromInvoices) {
+        if (!unifiedCompanies[name]) unifiedCompanies[name] = "N/A";
+      }
+      document.getElementById('totalCompanies').innerText = Object.keys(unifiedCompanies).length;
+
+      const companyList = document.getElementById('companyList');
+      companyList.innerHTML = '';
+      const sortedNames = Object.keys(unifiedCompanies).sort();
+      sortedNames.forEach(name => {
+        const gst = unifiedCompanies[name];
+        const li = document.createElement('li');
+        const nameSpan = document.createElement('span');
+        nameSpan.innerText = name;
+        li.appendChild(nameSpan);
+        if (gst !== "N/A") {
+          const deleteSpan = document.createElement('span');
+          deleteSpan.className = 'delete-icon';
+          deleteSpan.innerHTML = '🗑️';
+          deleteSpan.addEventListener('click', (e) => { e.stopPropagation(); deleteClient(gst); });
+          li.appendChild(deleteSpan);
         }
-
-        // --- Main Data Fetching ---
-        async function initializeDashboard() {
-            try {
-                const [invoiceResponse, clientResponse] = await Promise.all([
-                    fetch(`${APPS_SCRIPT_URL}`),
-                    fetch(`${APPS_SCRIPT_URL}?action=getClients`)
-                ]);
-                
-                const invoiceResult = await invoiceResponse.json();
-                if(invoiceResult.status === 'success') {
-                    invoiceData = invoiceResult.data;
-                    monthlyReportData = invoiceResult.data.monthlyData || {};
-                } else { throw new Error('Failed to load invoice data'); }
-
-                const clientResult = await clientResponse.json();
-                if(clientResult.status === 'success') { clientData = clientResult.data; }
-                else { throw new Error('Failed to load client data'); }
-                
-                document.getElementById('totalInvoices').innerText = invoiceData.stats.totalInvoices;
-                document.getElementById('currentMonthInvoices').innerText = invoiceData.stats.currentMonthInvoices;
-                renderUnifiedCompanyData();
-
-            } catch (error) {
-                console.error("Failed to initialize dashboard:", error);
-                document.getElementById('loader').innerText = "Failed to load data.";
-            }
-        }
-        
-        // --- Company List UI Rendering (Unchanged) ---
-        function renderUnifiedCompanyData() {
-            document.getElementById('loader').style.display = 'none';
-            const companiesFromInvoices = invoiceData.companies || {};
-            const unifiedCompanies = {};
-            for(const gst in clientData) { unifiedCompanies[clientData[gst].name] = gst; }
-            for(const name in companiesFromInvoices) { if(!unifiedCompanies[name]) { unifiedCompanies[name] = "N/A"; } }
-            document.getElementById('totalCompanies').innerText = Object.keys(unifiedCompanies).length;
-            const companyList = document.getElementById('companyList');
-            companyList.innerHTML = '';
-            const sortedNames = Object.keys(unifiedCompanies).sort();
-            sortedNames.forEach(name => {
-                const gst = unifiedCompanies[name];
-                const li = document.createElement('li');
-                const nameSpan = document.createElement('span');
-                nameSpan.innerText = name;
-                li.appendChild(nameSpan);
-                if (gst !== "N/A") {
-                    const deleteSpan = document.createElement('span');
-                    deleteSpan.className = 'delete-icon';
-                    deleteSpan.innerHTML = '🗑️';
-                    deleteSpan.addEventListener('click', (e) => { e.stopPropagation(); deleteClient(gst); });
-                    li.appendChild(deleteSpan);
-                }
-                li.addEventListener('click', () => {
-                    document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
-                    li.classList.add('active');
-                    showCompanyDetails(name, gst);
-                });
-                companyList.appendChild(li);
-            });
-        }
-        function showCompanyDetails(companyName, gst) {
-            const companyInvoiceData = invoiceData.companies[companyName];
-            document.getElementById('companyNameHeader').innerText = companyName;
-            document.getElementById('companyGstinHeader').innerText = `GSTIN: ${gst || 'N/A'}`;
-            if (companyInvoiceData) {
-                document.getElementById('companyInvoiceCount').innerText = companyInvoiceData.invoiceCount;
-                const tableBody = document.getElementById('invoiceTableBody');
-                tableBody.innerHTML = '';
-                companyInvoiceData.invoices.forEach(inv => {
-                    tableBody.innerHTML += `<tr><td>${inv.date}</td><td>${inv.invoiceNo}</td><td><a href="${inv.pdfLink}" target="_blank">View PDF</a></td></tr>`;
-                });
-            } else {
-                document.getElementById('companyInvoiceCount').innerText = '0';
-                document.getElementById('invoiceTableBody').innerHTML = '<tr><td colspan="3">No invoices created.</td></tr>';
-            }
-            switchView('companyDetailsView');
-        }
-
-        // --- NEW: Yearly/Monthly Report Functions ---
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const reportContainer = document.getElementById('reportContainer');
-        const reportTitle = document.getElementById('reportTitle');
-
-        function renderYearList() {
-            reportTitle.innerText = "Yearly Report";
-            reportContainer.innerHTML = '';
-            const sortedYears = Object.keys(monthlyReportData).sort((a, b) => b - a);
-
-            if (sortedYears.length === 0) {
-                reportContainer.innerHTML = '<p>No invoices found to generate a report.</p>';
-                return;
-            }
-
-            sortedYears.forEach(year => {
-                const yearDiv = document.createElement('div');
-                yearDiv.className = 'list-item';
-                yearDiv.innerHTML = `<span>${year}</span><span>➔</span>`;
-                yearDiv.onclick = () => renderMonthList(year);
-                reportContainer.appendChild(yearDiv);
-            });
-        }
-
-        function renderMonthList(year) {
-            reportTitle.innerText = `Months in ${year}`;
-            reportContainer.innerHTML = '';
-            
-            const backButton = document.createElement('button');
-            backButton.className = 'btn-back';
-            backButton.innerText = '← Back to Years';
-            backButton.onclick = renderYearList;
-            reportContainer.appendChild(backButton);
-
-            const sortedMonths = Object.keys(monthlyReportData[year]).sort((a, b) => a - b);
-
-            sortedMonths.forEach(monthIndex => {
-                const monthName = monthNames[monthIndex];
-                const invoices = monthlyReportData[year][monthIndex];
-                const monthDiv = document.createElement('div');
-                monthDiv.className = 'list-item';
-                monthDiv.innerHTML = `<span>${monthName}</span><span>${invoices.length} Invoices</span>`;
-                monthDiv.onclick = () => renderInvoiceList(year, monthIndex);
-                reportContainer.appendChild(monthDiv);
-            });
-        }
-
-        function renderInvoiceList(year, monthIndex) {
-            const monthName = monthNames[monthIndex];
-            reportTitle.innerText = `Invoices for ${monthName} ${year}`;
-            reportContainer.innerHTML = '';
-
-            const backButton = document.createElement('button');
-            backButton.className = 'btn-back';
-            backButton.innerText = '← Back to Months';
-            backButton.onclick = () => renderMonthList(year);
-            reportContainer.appendChild(backButton);
-
-            const invoices = monthlyReportData[year][monthIndex];
-            
-            const table = document.createElement('table');
-            table.innerHTML = `<thead><tr><th>Date</th><th>Invoice No</th><th>Client Name</th><th>Link</th></tr></thead>`;
-            const tbody = document.createElement('tbody');
-            
-            invoices.forEach(inv => {
-                const row = `<tr>
-                    <td>${inv.date}</td>
-                    <td>${inv.invoiceNo}</td>
-                    <td>${inv.clientName}</td>
-                    <td><a href="${inv.pdfLink}" target="_blank">View PDF</a></td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-            table.appendChild(tbody);
-            reportContainer.appendChild(table);
-        }
-
-
-        // --- Client Management Functions (Unchanged) ---
-        const clientGstInput = document.getElementById('clientGst');
-        const clientNameInput = document.getElementById('clientName');
-        const clientAddressInput = document.getElementById('clientAddress');
-        const clientStateInput = document.getElementById('clientState');
-        const clientCodeInput = document.getElementById('clientCode');
-
-        function displayClients() {
-            const tableBody = document.getElementById('clientListBody');
-            tableBody.innerHTML = '';
-            for (const gst in clientData) {
-                const client = clientData[gst];
-                tableBody.innerHTML += `<tr><td>${gst}</td><td>${client.name}</td><td class="action-buttons"><button onclick="editClient('${gst}')">✏️</button><button onclick="deleteClient('${gst}')">🗑️</button></td></tr>`;
-            }
-        }
-        function editClient(gst) {
-            const client = clientData[gst];
-            if (client) {
-                clientGstInput.value = client.gst; clientNameInput.value = client.name;
-                clientAddressInput.value = client.address; clientStateInput.value = client.state;
-                clientCodeInput.value = client.code; clientGstInput.readOnly = true;
-            }
-        }
-        async function saveClient() {
-            const gst = clientGstInput.value.trim().toUpperCase();
-            if (!gst) return alert('GST number is required.');
-            const payload = { action: 'saveClient', clientData: { gst, name: clientNameInput.value, address: clientAddressInput.value, state: clientStateInput.value, code: clientCodeInput.value }};
-            const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            const result = await response.json();
-            if (result.status === 'success') {
-                alert('Client saved successfully!');
-                await initializeDashboard();
-                displayClients();
-                clearForm();
-            } else { alert('Error saving client: ' + result.message); }
-        }
-        async function deleteClient(gst) {
-            if (confirm(`Are you sure you want to delete ${gst}?`)) {
-                const payload = { action: 'deleteClient', gstin: gst };
-                const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    await initializeDashboard(); 
-                    switchView('addClientView');
-                    displayClients();
-                } else { alert('Error deleting client: ' + result.message); }
-            }
-        }
-        function clearForm() {
-            clientGstInput.value = ''; clientNameInput.value = ''; clientAddressInput.value = ''; clientStateInput.value = ''; clientCodeInput.value = '';
-            clientGstInput.readOnly = false;
-        }
-
-        // --- Event Listeners ---
-        document.getElementById('homeBtn').addEventListener('click', () => {
-            document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
-            switchView('statsView');
+        li.addEventListener('click', () => {
+          document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
+          li.classList.add('active');
+          showCompanyDetails(name, gst);
         });
-        document.getElementById('companyToggle').addEventListener('click', () => {
-            document.getElementById('companyList').classList.toggle('open');
-            document.querySelector('.company-header .arrow').classList.toggle('open');
-        });
-        document.getElementById('addClientBtn').addEventListener('click', () => {
-            document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
-            clearForm();
-            switchView('addClientView');
-            displayClients();
-        });
-        document.getElementById('saveClientBtn').addEventListener('click', saveClient);
-        
-        document.getElementById('monthlyReportBtn').addEventListener('click', () => {
-            document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
-            switchView('monthlyReportView');
-            renderYearList();
-        });
+        companyList.appendChild(li);
+      });
+    }
 
-        window.addEventListener('load', initializeDashboard);
-    </script>
+    function showCompanyDetails(companyName, gst) {
+      const companyInvoiceData = invoiceData.companies && invoiceData.companies[companyName];
+      document.getElementById('companyNameHeader').innerText = companyName;
+      document.getElementById('companyGstinHeader').innerText = `GSTIN: ${gst || 'N/A'}`;
+      if (companyInvoiceData) {
+        document.getElementById('companyInvoiceCount').innerText = companyInvoiceData.invoiceCount;
+        const tableBody = document.getElementById('invoiceTableBody');
+        tableBody.innerHTML = '';
+        companyInvoiceData.invoices.forEach(inv => {
+          tableBody.innerHTML += `<tr><td>${inv.date}</td><td>${inv.invoiceNo}</td><td><a href="${inv.pdfLink}" target="_blank">View PDF</a></td></tr>`;
+        });
+      } else {
+        document.getElementById('companyInvoiceCount').innerText = '0';
+        document.getElementById('invoiceTableBody').innerHTML = '<tr><td colspan="3">No invoices created.</td></tr>';
+      }
+      switchView('companyDetailsView');
+    }
+
+    // --- Monthly/Yearly Report ---
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const reportContainer = document.getElementById('reportContainer');
+    const reportTitle = document.getElementById('reportTitle');
+
+    function renderYearList() {
+      reportTitle.innerText = "Yearly Report";
+      reportContainer.innerHTML = '';
+      const sortedYears = Object.keys(monthlyReportData).sort((a,b) => b - a);
+      if (sortedYears.length === 0) {
+        reportContainer.innerHTML = '<p>No invoices found to generate a report.</p>';
+        return;
+      }
+      sortedYears.forEach(year => {
+        const yearDiv = document.createElement('div'); yearDiv.className='list-item';
+        yearDiv.innerHTML = `<span>${year}</span><span>➔</span>`;
+        yearDiv.onclick = () => renderMonthList(year);
+        reportContainer.appendChild(yearDiv);
+      });
+    }
+
+    function renderMonthList(year) {
+      reportTitle.innerText = `Months in ${year}`;
+      reportContainer.innerHTML = '';
+      const backButton = document.createElement('button'); backButton.className='btn-back'; backButton.innerText='← Back to Years'; backButton.onclick = renderYearList;
+      reportContainer.appendChild(backButton);
+      const months = monthlyReportData[year] || {};
+      const sortedMonths = Object.keys(months).sort((a,b) => a - b);
+      sortedMonths.forEach(monthIndex => {
+        const monthName = monthNames[monthIndex];
+        const invoices = months[monthIndex] || [];
+        const monthDiv = document.createElement('div'); monthDiv.className='list-item';
+        monthDiv.innerHTML = `<span>${monthName}</span><span>${invoices.length} Invoices</span>`;
+        monthDiv.onclick = () => renderInvoiceList(year, monthIndex);
+        reportContainer.appendChild(monthDiv);
+      });
+    }
+
+    function renderInvoiceList(year, monthIndex) {
+      const monthName = monthNames[monthIndex];
+      reportTitle.innerText = `Invoices for ${monthName} ${year}`;
+      reportContainer.innerHTML = '';
+      const backButton = document.createElement('button'); backButton.className='btn-back'; backButton.innerText='← Back to Months'; backButton.onclick = () => renderMonthList(year);
+      reportContainer.appendChild(backButton);
+
+      const invoices = (monthlyReportData[year] && monthlyReportData[year][monthIndex]) || [];
+      const table = document.createElement('table');
+      table.innerHTML = `<thead><tr><th>Date</th><th>Invoice No</th><th>Client Name</th><th>Link</th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      invoices.forEach(inv => {
+        const row = `<tr><td>${inv.date}</td><td>${inv.invoiceNo}</td><td>${inv.clientName}</td><td><a href="${inv.pdfLink}" target="_blank">View PDF</a></td></tr>`;
+        tbody.innerHTML += row;
+      });
+      table.appendChild(tbody);
+      reportContainer.appendChild(table);
+    }
+
+    // --- Client Management ---
+    const clientGstInput = document.getElementById('clientGst');
+    const clientNameInput = document.getElementById('clientName');
+    const clientAddressInput = document.getElementById('clientAddress');
+    const clientStateInput = document.getElementById('clientState');
+    const clientCodeInput = document.getElementById('clientCode');
+
+    function displayClients() {
+      const tableBody = document.getElementById('clientListBody');
+      tableBody.innerHTML = '';
+      for (const gst in clientData) {
+        const client = clientData[gst];
+        tableBody.innerHTML += `<tr><td>${gst}</td><td>${client.name}</td><td class="action-buttons"><button onclick="editClient('${gst}')">✏️</button><button onclick="deleteClient('${gst}')">🗑️</button></td></tr>`;
+      }
+    }
+
+    function editClient(gst) {
+      const client = clientData[gst];
+      if (!client) return alert('Client not found');
+      clientGstInput.value = client.gst; clientNameInput.value = client.name;
+      clientAddressInput.value = client.address; clientStateInput.value = client.state; clientCodeInput.value = client.code;
+      clientGstInput.readOnly = true;
+      switchView('addClientView');
+    }
+
+    async function saveClient() {
+      const gst = clientGstInput.value.trim().toUpperCase();
+      if (!gst) return alert('GST number is required.');
+      const payload = { action: 'saveClient', clientData: { gst, name: clientNameInput.value, address: clientAddressInput.value, state: clientStateInput.value, code: clientCodeInput.value }};
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert('Client saved successfully!');
+          await initializeDashboard();
+          displayClients();
+          clearForm();
+        } else {
+          alert('Error saving client: ' + result.message);
+        }
+      } catch (err) {
+        alert('Network error saving client: ' + err.message);
+      }
+    }
+
+    async function deleteClient(gst) {
+      if (!gst) return;
+      if (!confirm(`Are you sure you want to delete ${gst}?`)) return;
+      const payload = { action: 'deleteClient', gstin: gst };
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await response.json();
+        if (result.status === 'success') {
+          await initializeDashboard();
+          switchView('addClientView');
+          displayClients();
+        } else {
+          alert('Error deleting client: ' + result.message);
+        }
+      } catch (err) {
+        alert('Network error deleting client: ' + err.message);
+      }
+    }
+
+    function clearForm() {
+      clientGstInput.value = ''; clientNameInput.value = ''; clientAddressInput.value = ''; clientStateInput.value = ''; clientCodeInput.value = '';
+      clientGstInput.readOnly = false;
+    }
+
+    // --- Event Listeners ---
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
+      switchView('statsView');
+    });
+    document.getElementById('companyToggle').addEventListener('click', () => {
+      document.getElementById('companyList').classList.toggle('open');
+      document.querySelector('.company-header .arrow').classList.toggle('open');
+    });
+    document.getElementById('addClientBtn').addEventListener('click', () => {
+      document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active'));
+      clearForm();
+      switchView('addClientView');
+      displayClients();
+    });
+    document.getElementById('saveClientBtn').addEventListener('click', saveClient);
+    document.getElementById('monthlyReportBtn').addEventListener('click', () => { document.querySelectorAll('.company-list li').forEach(item => item.classList.remove('active')); switchView('monthlyReportView'); renderYearList(); });
+
+    window.addEventListener('load', initializeDashboard);
+  </script>
 </body>
-
 </html>
+
+
 
 
