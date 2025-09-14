@@ -83,7 +83,8 @@
             font-family: inherit;
             font-size: inherit;
         }
-        input[type="date"] {
+        /* Style for the text-based date input */
+        #invoiceDate {
             font-family: Arial, sans-serif;
             font-size: 16px; 
             font-weight: bold;
@@ -133,13 +134,13 @@
         }
         .main-header {
             display: flex;
-            justify-content: center; /* Changed from space-between */
+            justify-content: center;
             align-items: center;
             padding: 0 10px;
         }
         #i1{
-            margin: 0; /* Removed margins */
-            padding-bottom: 10px; /* Added some padding for spacing */
+            margin: 0;
+            padding-bottom: 10px;
             flex-grow: 1;
             text-align: center;
         }
@@ -197,7 +198,7 @@
                                 </div>
                             </td>
                             <td style="width: 50%;">
-                                <div>Dated<br><input type="date" id="invoiceDate" style="text-align: center;"></div>
+                                <div>Dated<br><input type="text" id="invoiceDate" style="text-align: center;" placeholder="dd/mm/yyyy"></div>
                             </td>
                         </tr>
                         <tr>
@@ -409,7 +410,7 @@
 
 <script>
     // ⚠️ IMPORTANT: Paste your Web App URL from Google Apps Script here
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1enjzSw3ENfyjs2UMseA_9JfJTxU4RELNt4d9DYhqqVlqlCuYxylDHpiWzBjh2c9m/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhZcDN6G9j979fKrAd1N6QeCKoR3eYuNe1YBq8uxdjGhj--jnKZMYvlyA6m-NYmMPo/exec";
 
     // Make jsPDF available globally
     const { jsPDF } = window.jspdf;
@@ -419,10 +420,10 @@
         downloadBtn.disabled = true;
         downloadBtn.innerText = 'Saving...';
 
-        console.log("PDF generation and saving process started...");
         const invoiceElement = document.getElementById('invoiceToPrint');
         const invoiceNumber = document.getElementById('invoiceNumberInput').value || 'invoice';
         const clientName = document.getElementById('billToName').value || 'N/A';
+        const invoiceDateValue = document.getElementById('invoiceDate').value; // Get date value from text input
 
         // 1. Temporarily hide elements
         const addRemoveContainer = invoiceElement.querySelector('.add-remove-btn-container');
@@ -454,20 +455,17 @@
             const y = 20;
             pdf.addImage(imageData, 'JPEG', x, y, imageWidth, imageHeight);
             
-            // 4. Get PDF data as Base64 string
             const pdfBase64 = pdf.output('datauristring');
             
-            // 5. Create payload to send to Google Apps Script
             const payload = {
                 action: 'saveInvoice',
                 pdfData: pdfBase64,
                 fileName: `${invoiceNumber}.pdf`,
                 invoiceNo: invoiceNumber,
-                clientName: clientName
+                clientName: clientName,
+                invoiceDate: invoiceDateValue 
             };
             
-            // 6. Send the data to Google Apps Script
-            console.log("Sending data to Google Apps Script...");
             const response = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload),
@@ -476,9 +474,7 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                console.log("Successfully saved to Google Drive:", result.url);
                 alert("Invoice successfully saved to Google Drive!");
-                // 7. Finally, trigger the download for the user
                 pdf.save(`${invoiceNumber}.pdf`);
             } else {
                 throw new Error(result.message);
@@ -488,30 +484,23 @@
             console.error("An error occurred:", error);
             alert("Error saving invoice: " + error.message);
         } finally {
-            // 8. Restore the hidden elements and button state
             addRemoveContainer.style.display = 'flex';
             invoiceElement.style.filter = 'none';
             downloadBtn.disabled = false;
             downloadBtn.innerText = 'Save & Download PDF';
-            console.log("Process finished.");
         }
     }
 
     async function fetchAndStoreClients() {
-        console.log("Fetching latest client data...");
         try {
             const response = await fetch(`${APPS_SCRIPT_URL}?action=getClients`);
             const result = await response.json();
-
             if (result.status === 'success') {
                 localStorage.setItem('clientData', JSON.stringify(result.data));
-                console.log("Client data successfully fetched and stored in localStorage.");
             } else {
-                console.error("Failed to fetch client data:", result.message);
                 alert("Could not load client data. Auto-fill might not work for new clients.");
             }
         } catch (error) {
-            console.error("Error fetching clients:", error);
             alert("An error occurred while loading client data.");
         }
     }
@@ -528,7 +517,16 @@
         
         document.getElementById('addRowBtn').addEventListener('click', addRow);
         document.getElementById('removeRowBtn').addEventListener('click', removeRow);
-        document.getElementById('invoiceDate').valueAsDate = new Date();
+        
+        // --- MODIFIED ---
+        // Set today's date in dd/mm/yyyy format for the text input
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+        const year = today.getFullYear();
+        document.getElementById('invoiceDate').value = `${day}/${month}/${year}`;
+        // --- END MODIFIED ---
+        
         const shipToGstInput = document.getElementById('shipToGst');
         
         shipToGstInput.addEventListener('input', () => {
@@ -549,6 +547,7 @@
         calculateInvoice();
     });
     
+    // --- The rest of the script is unchanged ---
     const taxRate = 0.09;
     let itemCounter = 1;
     function autoGrowTextarea(element) {
@@ -702,4 +701,8 @@
 
 </body>
 </html>
+
+
+
+
 
